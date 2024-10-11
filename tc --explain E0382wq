@@ -1,0 +1,54 @@
+[0mThe compiler could not infer a type and asked for a type annotation.[0m
+
+[0mErroneous code example:[0m
+
+[0m[0m[2mlet x = Vec::new();[0m
+
+[0mThis error indicates that type inference did not result in one unique possible[0m [0mtype, and extra information is required. In
+most cases this can be provided[0m [0mby adding a type annotation. Sometimes you need to specify a generic type[0m [0mparameter
+manually.[0m
+
+[0mIn the example above, type [0m[0m[2mVec[0m has a type parameter [0m[0m[2mT[0m. When calling[0m [0m[0m[2mVec::new[0m, barring any other later usage of the
+variable [0m[0m[2mx[0m that allows the[0m [0mcompiler to infer what type [0m[0m[2mT[0m is, the compiler needs to be told what it is.[0m
+
+[0mThe type can be specified on the variable:[0m
+
+[0m[0m[2mlet x: Vec<i32> = Vec::new();[0m
+
+[0mThe type can also be specified in the path of the expression:[0m
+
+[0m[0m[2mlet x = Vec::<i32>::new();[0m
+
+[0mIn cases with more complex types, it is not necessary to annotate the full[0m [0mtype. Once the ambiguity is resolved, the
+compiler can infer the rest:[0m
+
+[0m[0m[2mlet x: Vec<_> = "hello".chars().rev().collect();[0m
+
+[0mAnother way to provide the compiler with enough information, is to specify the[0m [0mgeneric type parameter:[0m
+
+[0m[0m[2mlet x = "hello".chars().rev().collect::<Vec<char>>();[0m
+
+[0mAgain, you need not specify the full type if the compiler can infer it:[0m
+
+[0m[0m[2mlet x = "hello".chars().rev().collect::<Vec<_>>();[0m
+
+[0mApart from a method or function with a generic type parameter, this error can[0m [0moccur when a type parameter of a struct or
+trait cannot be inferred. In that[0m [0mcase it is not always possible to use a type annotation, because all candidates[0m [0mhave the
+same return type. For instance:[0m
+
+[0m[0m[2mstruct Foo<T> {
+    num: T,
+}
+
+impl<T> Foo<T> {
+    fn bar() -> i32 {
+        0
+    }
+
+    fn baz() {
+        let number = Foo::bar();
+    }
+}[0m
+
+[0mThis will fail because the compiler does not know which instance of [0m[0m[2mFoo[0m to[0m [0mcall [0m[0m[2mbar[0m on. Change [0m[0m[2mFoo::bar()[0m to [0m[0m[2mFoo::<T>::bar()
+[0m to resolve the error.[0m[0m
